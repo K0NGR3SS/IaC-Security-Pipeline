@@ -1,0 +1,13 @@
+---
+meta
+  name: "Ensure SSH is not open to 0.0.0.0/0"
+  id: "CKV2_CUSTOM_SSH_1"
+  category: "NETWORKING"
+definition:
+  cond_type: "attribute"
+  resource_types:
+    - "aws_security_group_rule"
+    - "aws_security_group"
+  attribute: "cidr_blocks"
+  operator: "not_contains"
+  value: "0.0.0.0/0"

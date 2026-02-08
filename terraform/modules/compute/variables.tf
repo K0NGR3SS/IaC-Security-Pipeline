@@ -12,8 +12,9 @@ variable "instance_type" {
   default = "t3.micro"
 }
 
-variable "subnet_id" {
-  type = string
+variable "subnet_ids" {
+  description = "List of subnet IDs"
+  type        = list(string)
 }
 
 variable "security_group_ids" {

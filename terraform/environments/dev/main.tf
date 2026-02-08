@@ -2,7 +2,7 @@ terraform {
   required_version = ">= 1.5.0"
 
   backend "s3" {
-    bucket         = "your-terraform-state-bucket"
+    bucket         = "nazariy-terraform-state"
     key            = "dev/terraform.tfstate"
     region         = "eu-west-1"
     encrypt        = true
@@ -60,7 +60,7 @@ module "compute" {
   environment        = var.environment
   instance_count     = 1
   instance_type      = "t3.micro"
-  subnet_id          = module.vpc.public_subnets[0]
+  subnet_ids         = module.vpc.public_subnets  # Changed from subnet_id to subnet_ids
   security_group_ids = [module.security_groups.web_sg_id]
   volume_size        = 20
 }

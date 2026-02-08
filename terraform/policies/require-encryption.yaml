@@ -1,0 +1,12 @@
+---
+meta
+  name: "Ensure EBS volumes are encrypted"
+  id: "CKV2_CUSTOM_ENC_1"
+  category: "ENCRYPTION"
+definition:
+  cond_type: "attribute"
+  resource_types:
+    - "aws_instance"
+  attribute: "root_block_device.encrypted"
+  operator: "equals"
+  value: true

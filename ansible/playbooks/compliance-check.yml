@@ -1,0 +1,51 @@
+---
+- name: CIS Compliance Validation
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Check SSH root login is disabled
+      command: grep "^PermitRootLogin no" /etc/ssh/sshd_config
+      register: ssh_root_login
+      changed_when: false
+      failed_when: ssh_root_login.rc != 0
+
+    - name: Check password authentication is disabled
+      command: grep "^PasswordAuthentication no" /etc/ssh/sshd_config
+      register: ssh_password_auth
+      changed_when: false
+      failed_when: ssh_password_auth.rc != 0
+
+    - name: Check UFW is enabled
+      command: ufw status
+      register: ufw_status
+      changed_when: false
+      failed_when: "'Status: active' not in ufw_status.stdout"
+
+    - name: Check Fail2Ban is running
+      service_facts:
+      register: services
+
+    - name: Verify Fail2Ban status
+      assert:
+        that:
+          - "'fail2ban.service' in services.ansible_facts.services"
+          - "services.ansible_facts.services['fail2ban.service'].state == 'running'"
+        fail_msg: "Fail2Ban is not running"
+        success_msg: "Fail2Ban is active"
+
+    - name: Check password quality settings
+      command: grep "^minlen" /etc/security/pwquality.conf
+      register: pw_quality
+      changed_when: false
+      failed_when: pw_quality.rc != 0
+
+    - name: Generate compliance summary
+      debug:
+        msg:
+          - "✅ SSH root login disabled"
+          - "✅ SSH password auth disabled"
+          - "✅ UFW firewall active"
+          - "✅ Fail2Ban running"
+          - "✅ Password policy enforced"
